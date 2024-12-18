@@ -1,4 +1,4 @@
-package pablo.iniesta.marsrovercodingchallenge.ui.theme
+package pablo.iniesta.marsrovercodingchallenge.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
