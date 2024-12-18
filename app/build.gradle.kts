@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -54,6 +56,14 @@ dependencies {
     //Navigation component with compose
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    //Dagger Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    //JSON parsing
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

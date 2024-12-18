@@ -8,9 +8,11 @@ import kotlinx.serialization.Serializable
 import pablo.iniesta.marsrovercodingchallenge.presentation.ui.theme.MarsRoverCodingChallengeTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dagger.hilt.android.AndroidEntryPoint
 import pablo.iniesta.marsrovercodingchallenge.presentation.marsscreen.MarsScreen
 import pablo.iniesta.marsrovercodingchallenge.presentation.startscreen.StartScreen
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
