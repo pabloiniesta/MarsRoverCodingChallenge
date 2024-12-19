@@ -1,11 +1,10 @@
 package pablo.iniesta.marsrovercodingchallenge.presentation.marsscreen
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
-import com.example.roverchallenge.util.Direction
-import com.example.roverchallenge.util.Position
+import pablo.iniesta.marsrovercodingchallenge.util.Direction
+import pablo.iniesta.marsrovercodingchallenge.util.Position
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pablo.iniesta.marsrovercodingchallenge.data.datasource.MarsDataSource
+import pablo.iniesta.marsrovercodingchallenge.data.dto.MarsInput
 import pablo.iniesta.marsrovercodingchallenge.domain.Rover
 import javax.inject.Inject
 
@@ -26,11 +26,13 @@ class MarsViewModel @Inject constructor(
     val parcelList = mutableStateOf<List<Boolean>>(listOf())
     val rover = mutableStateOf<Rover?>(null)
     val movements = mutableStateOf("")
+    val error = mutableStateOf<String?>(null)
     private val viewModelScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     init {
-        val marsInput = marsDataSource.loadInput()
-        if (marsInput != null) {
+        try {
+            val marsInput = marsDataSource.loadInput()
+            if (!isMarsInputValid(marsInput)) throw Exception("Invalid rover starting position or plateau bounds")
             //Create the Rover using the input data
             rover.value = Rover(
                 Position(marsInput.roverPosition.x, marsInput.roverPosition.y),
@@ -43,9 +45,9 @@ class MarsViewModel @Inject constructor(
             parcelList.value = List(rover.value!!.getTotalParcels()) { false }
             //Start the movement processing
             setUpMovementProcessing()
-        } else {
-            //TODO handle error reading json
-            Log.e("MarsViewModel", "Error loading data")
+        } catch (e: Exception) {
+            //TODO handle error loading data
+            error.value = e.message
         }
     }
 
@@ -73,6 +75,14 @@ class MarsViewModel @Inject constructor(
                 i == rover.value!!.getCurrentParcel()
             }
         }
+    }
+
+    private fun isMarsInputValid(marsInput: MarsInput): Boolean {
+        //Validate that the plateau bounds are greater than 0 and the rover position is within the bounds
+        if (marsInput.topRightCorner.x <= 0 || marsInput.topRightCorner.y <= 0) return false
+        else if (marsInput.roverPosition.x < 0 || marsInput.roverPosition.y < 0) return false
+        else if (marsInput.roverPosition.x > marsInput.topRightCorner.x || marsInput.roverPosition.y > marsInput.topRightCorner.y) return false
+        return true
     }
 
     private fun Rover.getTotalParcels(): Int {

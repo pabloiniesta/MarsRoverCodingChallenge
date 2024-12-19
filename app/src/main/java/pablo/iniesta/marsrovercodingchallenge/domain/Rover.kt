@@ -1,7 +1,7 @@
 package pablo.iniesta.marsrovercodingchallenge.domain
 
-import com.example.roverchallenge.util.Direction
-import com.example.roverchallenge.util.Position
+import pablo.iniesta.marsrovercodingchallenge.util.Direction
+import pablo.iniesta.marsrovercodingchallenge.util.Position
 
 data class Rover(
     var coordinates: Position,

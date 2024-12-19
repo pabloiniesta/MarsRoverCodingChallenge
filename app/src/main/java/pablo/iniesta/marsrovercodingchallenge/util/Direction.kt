@@ -1,4 +1,4 @@
-package com.example.roverchallenge.util
+package pablo.iniesta.marsrovercodingchallenge.util
 
 enum class Direction {
     N,
