@@ -41,8 +41,8 @@ class MarsViewModel @Inject constructor(
             movements.value = marsInput.movements
             //Initialize the parcel list to false for all parcels
             parcelList.value = List(rover.value!!.getTotalParcels()) { false }
+            //Start the movement processing
             setUpMovementProcessing()
-            //occupyParcel()
         } else {
             //TODO handle error reading json
             Log.e("MarsViewModel", "Error loading data")
@@ -56,15 +56,10 @@ class MarsViewModel @Inject constructor(
         movementsFlow
             .filter { it.isNotEmpty() }
             .onEach { movementsString ->
-                Log.d("MarsViewModel","FLOW")
                 repeat(movementsString.length) { index ->
-                    Log.d("MarsViewModel", "Action: " + movements.value.first())
                     rover.value = rover.value?.move(movements.value.first())
                     movements.value = movements.value.drop(1)
                     occupyParcel()
-                    Log.d("MarsViewModel", "Movement $index")
-                    Log.d("MarsViewModel", "Movements $movements")
-                    Log.d("MarsViewModel", "Rover $rover")
                     delay(1000L)
                 }
             }
@@ -72,9 +67,8 @@ class MarsViewModel @Inject constructor(
     }
 
     private fun occupyParcel() {
-        //Set the current parcel the Rover is standing on to true following the formula: (Row - 1 - rover.y) * Columns + rover.x
+        //Set the current parcel the Rover is standing on to true
         if (rover.value != null) {
-            Log.d("MarsViewModel", "Current parcel index: ${rover.value!!.getCurrentParcel()}")
             parcelList.value = List(parcelList.value.size) { i ->
                 i == rover.value!!.getCurrentParcel()
             }
@@ -87,6 +81,7 @@ class MarsViewModel @Inject constructor(
     }
 
     private fun Rover.getCurrentParcel(): Int {
+        //Current parcel index = (Row - 1 - rover.y) * Columns + rover.x
         return ((this.boundaries.x + 1) - 1 - this.coordinates.y) * (this.boundaries.y + 1) + this.coordinates.x
     }
 

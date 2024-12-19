@@ -3,6 +3,11 @@ package pablo.iniesta.marsrovercodingchallenge.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import pablo.iniesta.marsrovercodingchallenge.presentation.ui.theme.MarsRoverCodingChallengeTheme
@@ -16,20 +21,25 @@ import pablo.iniesta.marsrovercodingchallenge.presentation.startscreen.StartScre
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             MarsRoverCodingChallengeTheme {
                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = StartScreen
-                ) {
-                    composable<StartScreen> {
-                        StartScreen(navController)
-                    }
-                    composable<MarsScreen> {
-                        MarsScreen()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = StartScreen,
+                        modifier = Modifier.padding(innerPadding)
+                        ) {
+                        composable<StartScreen> {
+                            StartScreen(navController)
+                        }
+                        composable<MarsScreen> {
+                            MarsScreen()
+                        }
                     }
                 }
+
             }
         }
     }
